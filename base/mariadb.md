@@ -1,0 +1,92 @@
+# MariaDB
+
+MariaDB 是 MySQL 的主要分支之一，推荐替代 MySQL 使用
+
+## 安装
+
+CentOS 官方源版本较旧，使用 MariaDB 官方源
+
+```
+# 官方镜像
+sudo tee /etc/yum.repos.d/mariadb.repo <<-'EOF'
+# http://downloads.mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = https://yum.mariadb.org/10.1/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+EOF
+
+# 中科大镜像
+sudo tee /etc/yum.repos.d/mariadb.repo <<-'EOF'
+# http://downloads.mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = https://mirrors.ustc.edu.cn/mariadb/yum/10.1/centos7-amd64
+gpgkey=https://mirrors.ustc.edu.cn/mariadb/yum/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+EOF
+
+sudo yum makecache
+sudo yum install MariaDB-client MariaDB-server MariaDB-devel
+
+sudo systemctl enable mariadb
+sudo systemctl start mariadb
+
+sudo mysql_secure_installation
+```
+
+## 配置
+
+将默认字符集改为 utf8mb4，避免意外的问题：
+
+`/etc/my.cnf.d/mysql-clients.cnf`:
+
+```
+[mysql]
+default-character-set = utf8mb4
+
+[mysqldump]
+default-character-set = utf8mb4
+```
+
+`/etc/my.cnf.d/server.cnf`:
+
+```
+[mysqld]
+character-set-server = utf8mb4
+log-error = /var/log/mariadb/error.log
+#general_log = 1
+#general_log_file = /var/log/mariadb/general.log
+slow_query_log = 1
+slow_query_log_file = /var/log/mariadb/slow.log
+```
+
+创建日志目录：
+
+```
+sudo mkdir /var/log/mariadb
+sudo chown mysql: /var/log/mariadb
+```
+
+日志轮滚配置：
+
+```
+sudo tee /etc/logrotate.d/mysql <<-'EOF'
+/var/log/mariadb/*log /var/lib/mysql/mysqld.log {
+    su mysql mysql
+    missingok
+    daily
+    minsize 300M
+    rotate 10
+    compress
+    delaycompress
+    copytruncate
+}
+EOF
+
+## 参考资料
+
+* [官方主页](https://mariadb.org/)
+* [MariaDB Repository Configuration Tool](https://downloads.mariadb.org/mariadb/repositories)
+* [中科大镜像源配置](https://lug.ustc.edu.cn/wiki/mirrors/help/mariadb)
