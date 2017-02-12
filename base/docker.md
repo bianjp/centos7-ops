@@ -58,13 +58,15 @@ sudo systemctl restart docker
 登录 [阿里云](https://cr.console.aliyun.com/#/accelerator) 获取加速地址（需认证为开发者），添加到 `/etc/docker/daemon.json` 中：
 
 ```
-"registry-mirrors": ["your_mirror_address"]
+{
+  "registry-mirrors": ["your_mirror_address"]
+}
 ```
 
 也可考虑使用其它加速服务：
 
 * [网易 DockerHub 加速](https://c.163.com/wiki/index.php?title=DockerHub%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F)
-* [Daocloud 加速器](https://www.daocloud.io/mirror.html)
+* [Daocloud 加速器](https://www.daocloud.io/mirror)
 
 ## 参考资料
 
