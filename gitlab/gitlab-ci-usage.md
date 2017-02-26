@@ -54,6 +54,14 @@ GitLab 自带 GitLab-CI，可用于自动构建、测试、部署
       * 若自动部署工具（如 mina）启用了 SSH agent forwarding， 将公钥添加到项目的 Deploy Keys 中
       * 若未启用，将部署服务器上的 `~/.ssh/id_rsa.pub` 添加到项目的 Deploy Keys 中
 
+## Builds Emails
+
+GitLab 支持在构建失败时邮件提示，但默认并未开启
+
+可在 Project -> Services -> Builds emails 中开启
+
+管理员用户可在 Admin Area -> Service Templates -> Builds emails 中为新项目默认启用
+
 ## 技巧/注意事项
 
 以下部分命令通过修改环境变量 PATH 生效，若放在外部文件中，须通过 `source` 命令引入方有效
@@ -216,7 +224,7 @@ development:
 
 ## 参考资料
 
-* [GitLab-CI docs](http://doc.gitlab.com/ce/ci/)
+* [GitLab-CI documentation](http://doc.gitlab.com/ce/ci/)
 * [Using Docker Images](http://doc.gitlab.com/ee/ci/docker/using_docker_images.html)
 * [.gitlab-ci.yml usage](http://doc.gitlab.com/ce/ci/yaml/README.html)
 * [Using SSH keys](https://gitlab.com/help/ci/ssh_keys/README.md)
