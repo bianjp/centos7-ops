@@ -26,7 +26,33 @@ gem install bundler
 
 __注意：上述 rvm 安装步骤为单用户模式，部署 ruby 应用时使用的用户应为执行上述安装步骤的用户__
 
+## rbenv
+
+```
+git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
+git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+git clone https://github.com/sstephenson/rbenv-gem-rehash.git ~/.rbenv/plugins/rbenv-gem-rehash
+git clone https://github.com/rkh/rbenv-update.git ~/.rbenv/plugins/rbenv-update
+# 使用 Ruby China 的镜像安装 Ruby, 国内用户推荐
+git clone https://github.com/AndorChen/rbenv-china-mirror.git ~/.rbenv/plugins/rbenv-china-mirror
+
+tee -a ~/.bash_profile <<-'EOF'
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+EOF
+```
+
+安装 ruby:
+
+```
+rbenv install 2.3.3
+# 默认使用版本
+rbenv global 2.3.3
+```
+
 ## 配置
+
+使用[Ruby China gem 源](https://gems.ruby-china.org/)，禁止安装文档
 
 ```
 cat <<EOF > ~/.gemrc
@@ -43,5 +69,7 @@ EOF
 
 ## 参考资料
 
+* [RVM](https://rvm.io/)
+* [rbenv GitHub Repository](https://github.com/rbenv/rbenv/)
 * [Ruby China RVM 实用指南](https://ruby-china.org/wiki/rvm-guide)
 * [Ruby China rbenv 实用指南](https://ruby-china.org/wiki/rbenv-guide)

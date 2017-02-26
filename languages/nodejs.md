@@ -4,6 +4,10 @@
 
 EPEL 源中已有 6.x 版本
 
+```
+sudo yum install nodejs
+```
+
 若仍想使用更新版本，可使用 [NodeSource 源](https://github.com/nodesource/distributions)：
 
 ```

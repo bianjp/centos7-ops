@@ -14,8 +14,10 @@ sudo yum install nginx passenger
 
 ```
 passenger_root /usr/share/ruby/vendor_ruby/phusion_passenger/locations.ini;
-# 使用 RVM 默认的 ruby 版本。username 根据实际情况修改
+# 使用 RVM/rbenv/系统 默认的 ruby 版本。username 根据实际情况修改
 passenger_ruby /home/username/.rvm/wrappers/default/ruby;
+# passenger_ruby /home/username/.rbenv/shims/ruby;
+# passenger_ruby /usr/bin/ruby;
 passenger_instance_registry_dir /var/run/passenger-instreg;
 ```
 

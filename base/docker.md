@@ -2,11 +2,10 @@
 
 ## 安装
 
-官方源经常连接失败，使用清华大学 docker 源：
+添加 docker 镜像源：
 
 ```
-sudo yum update
-
+# 国内使用清华大学源
 sudo tee /etc/yum.repos.d/docker.repo <<-'EOF'
 [docker]
 name=Docker Repository
@@ -16,6 +15,13 @@ gpgcheck=1
 gpgkey=https://mirrors.tuna.tsinghua.edu.cn/docker/yum/gpg
 EOF
 
+# 国外使用官方源
+sudo yum-config-manager \
+    --add-repo \
+    https://docs.docker.com/engine/installation/linux/repo_files/centos/docker.repo
+```
+
+```
 sudo yum install docker-engine
 
 sudo systemctl start docker
@@ -28,6 +34,8 @@ sudo usermod -aG docker `whoami`
 ## 配置
 
 Docker 守护进程的配置文件为 `/etc/docker/daemon.json`
+
+参考 [Daemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#/daemon-configuration-file)
 
 ## 存储位置
 
@@ -70,4 +78,7 @@ sudo systemctl restart docker
 
 ## 参考资料
 
+* [Docker Documentation](https://docs.docker.com/)
+* [Install Docker Engine](https://docs.docker.com/engine/installation/)
 * [清华大学 docker 源](https://mirror.tuna.tsinghua.edu.cn/help/docker/)
+* [Daemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#/daemon-configuration-file)

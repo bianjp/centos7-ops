@@ -8,7 +8,9 @@ GitLab Runner 是 GitLab-CI 的任务执行者，需单独安装
 
 可安装在任意位置，并不需要与 GitLab 在同一台机器
 
-官方源经常连接失败，使用[清华大学 gitlab-ci-multi-runner 源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-ci-multi-runner/)：
+### 添加软件源
+
+国内使用[清华大学源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-ci-multi-runner/)：
 
 ```
 sudo tee /etc/yum.repos.d/gitlab-ci-multi-runner.repo <<-'EOF'
@@ -20,15 +22,34 @@ gpgcheck=0
 enabled=1
 gpgkey=https://packages.gitlab.com/gpg.key
 EOF
+```
 
+国外使用 GitLab 官方源：
+
+```
+curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-ci-multi-runner/script.rpm.sh | sudo bash
+```
+
+### 安装
+
+```
 sudo yum install gitlab-ci-multi-runner
+```
 
+## 管理命令
+
+```
 # 查看状态/启动/关闭/重启
 sudo systemctl status/start/stop/restart gitlab-runner
 # 启用/禁用自动启动。安装后默认已启用自动启动
 sudo systemctl enable/disable gitlab-runner
+````
 
-# 更新
+## 更新
+
+更新前检查[更新日志](https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/blob/master/CHANGELOG.md) 和 GitLab 的[发布声明]()
+
+```
 sudo yum update
 # 更新后需重启
 sudo systemctl restart gitlab-ci-multi-runner
@@ -42,6 +63,8 @@ sudo systemctl restart gitlab-ci-multi-runner
 
 ## 添加 runner
 
+添加后才能在 CI 中使用
+
 ```
 sudo gitlab-runner register
 ```
@@ -50,8 +73,19 @@ sudo gitlab-runner register
 
 若添加专用 runner, token 为项目的 Settings -> Runners 页面所示
 
+## 并发度
+
+默认每个 runner 的并发度是 1，即同一时间只能有一个构建使用该 runner
+
+参考 [Advanced configuration options](https://docs.gitlab.com/runner/configuration/advanced-configuration.html)，设置全局的 `concurrent` 和每个 runner 的 `limit`
+
+根据系统负载能力酌情设置
+
+__`limit` > 1 可能会导致缓存经常失效__
+
 ## 参考资料
 
-* [Install GitLab Runner](https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/#install-gitlab-runner)
-* [Install Docker](https://docs.docker.com/engine/installation/linux/centos/)
+* [GitLab Runner Documentation](https://docs.gitlab.com/runner/)
+* [Install GitLab Runner](https://docs.gitlab.com/runner/install/linux-repository.html)
+* [Advanced configuration options](https://docs.gitlab.com/runner/configuration/advanced-configuration.html)
 * [清华大学 gitlab-ci-multi-runner 源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-ci-multi-runner/)

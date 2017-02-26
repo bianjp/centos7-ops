@@ -31,9 +31,12 @@ yum update -y
 yum group install -y development
 yum install -y vim bash-completion git mailx deltarpm bind-utils yum-utils
 yum install -y epel-release
+yum-config-manager --enable epel
 ```
 
-若默认的软件源（阿里云、腾讯云默认都是使用他们自己维护的软件源）中软件版本较旧，可替换为中科大的源：[https://lug.ustc.edu.cn/wiki/mirrors/help/centos]()
+若默认的软件源（云服务厂商一般都使用他们自己维护的软件源）中软件版本较旧或速度较慢，可替换为[中科大源](https://lug.ustc.edu.cn/wiki/mirrors/help/centos)或[清华大学源](https://mirror.tuna.tsinghua.edu.cn/help/centos/)
+
+EPEL 也可改用[中科大源](https://lug.ustc.edu.cn/wiki/mirrors/help/epel)或[清华大学源](https://mirror.tuna.tsinghua.edu.cn/help/epel/)
 
 ## sshd
 

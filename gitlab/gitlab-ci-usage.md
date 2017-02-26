@@ -15,7 +15,7 @@ GitLab 自带 GitLab-CI，可用于自动构建、测试、部署
     * 不同 stage 的任务按 `stages` 指令指定的顺序（默认为build, test, deploy）执行
     * 同一 stage 的多个任务可并行执行
 
-* Executor: 执行任务的容器类别，如 ssh, docker, virtualbox等。__我们使用 docker__
+* Executor: 执行任务的容器类别，如 ssh, docker, virtualbox 等。__我们使用 docker__
 
 * Runner: 执行任务的容器
     * 分共享和专用两种，共享的可供所有项目使用，专用的只能用于特定项目（一个或多个）
@@ -97,6 +97,8 @@ fi
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 ```
+
+__GitLab runner 1.11 似乎已不存在这个问题__
 
 ### 使用服务
 
@@ -196,6 +198,7 @@ test:
 # 部署到生产服务器
 production:
   stage: deploy
+  enrironment: production
   script:
     - bundle exec mina production deploy
   only:
@@ -204,6 +207,7 @@ production:
 # 部署到开发服务器
 development:
   stage: deploy
+  environment: development
   script:
     - bundle exec mina dev deploy
   only:

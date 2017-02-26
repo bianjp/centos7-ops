@@ -6,7 +6,8 @@
 * Gem packages: bundler
 * Node.js, npm
 * gcc, g++, make 等工具，编译 gem 扩展需要
-* mariadb-devel（编译 [mysql2](https://github.com/brianmario/mysql2) gem 包需要）
+* mariadb-devel（编译 [mysql2](https://github.com/brianmario/mysql2) gem 需要）
+* postgresql-libs postgresql-devel（编译 [pg](https://rubygems.org/gems/pg/) gem 需要）
 
 部分非必须
 

@@ -4,6 +4,8 @@
 
 ## 安装
 
+__若需使用 Passenger，请使用 [Passenger 文档](../deploy/passenger.md)中的方式安装 Nginx__
+
 EPEL 源中版本过旧，使用 Nginx 官方源
 
 ```
@@ -134,6 +136,11 @@ ssl_prefer_server_ciphers on;
 # fetch OCSP records from URL in ssl_certificate and cache them
 ssl_stapling on;
 ssl_stapling_verify on;
+
+# name servers used to resolve names of upstream servers into addresses
+# 国内使用 DNSPod Public DNS, 阿里 DNS
+resolver 119.29.29.29 182.254.116.116 223.5.5.5 223.6.6.6;
+# resolver 8.8.8.8 8.8.4.4;
 ```
 
 `/etc/nginx/includes/https-hsts.conf`:

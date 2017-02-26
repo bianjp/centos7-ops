@@ -23,9 +23,9 @@ sudo firewall-cmd --reload
 inet_interfaces = loopback-only
 ```
 
-### 安装 GitLab 软件源
+### 添加 GitLab 软件源
 
-官方源经常连接失败，使用[清华大学 gitlab-ce 源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-ce/)：
+国内使用[清华大学源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-ce/)：
 
 ```
 sudo tee /etc/yum.repos.d/gitlab-ce.repo <<-'EOF'
@@ -37,6 +37,12 @@ gpgcheck=0
 enabled=1
 gpgkey=https://packages.gitlab.com/gpg.key
 EOF
+```
+
+国外使用 GitLab 官方源：
+
+```
+curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
 ```
 
 ### 安装 GitLab
@@ -162,6 +168,8 @@ sudo gitlab-rake gitlab:check
 ```
 
 ## 升级
+
+升级前需检查新版本及所有中间版本的[发布声明](https://about.gitlab.com/blog/archives.html)
 
 ```
 sudo yum update gitlab-ce
