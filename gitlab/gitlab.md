@@ -107,7 +107,7 @@ server {
 }
 ```
 
-更多配置，查看[配置文档][settings]
+更多配置，查看[配置文档](http://docs.gitlab.com/omnibus/settings/)
 
 修改配置文件后需执行以下命令以使配置生效
 
@@ -230,13 +230,9 @@ __注意：恢复时 GitLab 版本必须与备份时版本完全相同（x.x.x�
 
 ## 参考资料
 
-* [Installation][download]
-* [Documation](https://gitlab.com/gitlab-org/omnibus-gitlab/tree/master/doc/)
-* [Settings][settings]
-* [Backup and Restore][backup_restore]
-* [Nginx Settings](https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/settings/nginx.md)
+* [Installation](https://about.gitlab.com/downloads/)
+* [GitLab CE Documentation](http://docs.gitlab.com/ce/)
+* [Omnibus Documentation](http://docs.gitlab.com/omnibus/)
+* [Omnibus Settings](http://docs.gitlab.com/omnibus/settings/)
+* [Backup and Restore](http://docs.gitlab.com/ce/raketasks/backup_restore.html)
 * [清华大学 gitlab-ce 源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-ce/)
-
-[download]: https://about.gitlab.com/downloads/
-[backup_restore]: https://gitlab.com/gitlab-org/gitlab-ce/blob/master/doc/raketasks/backup_restore.md
-[settings]: https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/doc/settings/

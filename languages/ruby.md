@@ -73,3 +73,4 @@ EOF
 * [rbenv GitHub Repository](https://github.com/rbenv/rbenv/)
 * [Ruby China RVM 实用指南](https://ruby-china.org/wiki/rvm-guide)
 * [Ruby China rbenv 实用指南](https://ruby-china.org/wiki/rbenv-guide)
+* [Ruby China gem 源](https://gems.ruby-china.org/)
