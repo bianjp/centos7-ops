@@ -50,6 +50,37 @@ rbenv install 2.3.3
 rbenv global 2.3.3
 ```
 
+## 手动编译安装
+
+以 root 身份执行：
+
+```
+RUBY_VERSION=2.4.1
+RUBY_DOWNLOAD_MIRROR=https://cache.ruby-lang.org/pub/ruby/
+# RUBY_DOWNLOAD_MIRROR=https://cache.ruby-china.org/pub/ruby/
+
+yum install -y autoconf gcc gcc-c++ make automake patch
+yum install -y git openssh curl which tar gzip bzip2 unzip zip
+yum install -y openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel
+yum install -y epel-release yum-utils
+yum-config-manager --enable epel
+
+mkdir -p /usr/local/etc
+echo -e "install: --no-document\nupdate: --no-document" > /usr/local/etc/gemrc
+mkdir /build && cd /build
+curl -o ruby.tar.gz "$RUBY_DOWNLOAD_MIRROR/ruby-$RUBY_VERSION.tar.gz"
+mkdir ruby && tar -xzf ruby.tar.gz -C ruby --strip-components=1
+cd ruby
+./configure --disable-install-doc --enable-shared
+make -j"$(nproc)"
+make install
+cd / && rm -rf /build
+```
+
+```
+gem update --system && gem install bundler
+```
+
 ## 配置
 
 使用[Ruby China gem 源](https://gems.ruby-china.org/)，禁止安装文档
