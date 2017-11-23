@@ -86,18 +86,18 @@ firewall-cmd --get-active-zones
 firewall-cmd --set-default-zone=dmz
 
 # 允许对外开放的服务。执行 ls /usr/lib/firewalld/services/ 以查看支持的服务列表
-firewall-cmd --permanent --zone=dmz --add-service=http
-firewall-cmd --permanent --zone=dmz --add-service=https
-firewall-cmd --permanent --zone=dmz --add-service=ssh
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=https
+firewall-cmd --permanent --add-service=ssh
 
 # 允许对外开放的端口
-# firewall-cmd --permanent --zone=dmz --add-port=3306/tcp
+# firewall-cmd --permanent --add-port=3306/tcp
 
 # 重载配置以生效
 firewall-cmd --reload
 
 # 查看配置
-firewall-cmd --zone=dmz --list-all
+firewall-cmd --list-all
 ```
 
 __注意：__
@@ -202,7 +202,7 @@ swapon -s
 free -m
 
 # 创建交换空间文件
-dd if=/dev/zero of=/swapfile bs=1M count=2048
+dd if=/dev/zero of=/swapfile bs=1M count=2048 status=progress
 chmod 600 /swapfile
 mkswap /swapfile
 

@@ -18,7 +18,7 @@ enabled=1
 EOF
 
 sudo yum makecache
-sudo yum install nginx
+sudo yum install -y nginx
 
 sudo systemctl enable nginx
 sudo systemctl start nginx
@@ -108,13 +108,11 @@ minsize 300M
 ```
 # 默认是 1024 位，不够安全
 sudo openssl dhparam -out /etc/ssl/dhparam.pem 2048
-```
 
-添加以下配置文件
+sudo mkdir -p /etc/nginx/includes
 
-`/etc/nginx/includes/https.conf`:
-
-```
+# 添加配置文件
+sudo tee /etc/nginx/includes/https.conf <<-'EOF'
 # certs
 #ssl_certificate /path/to/fullchain.pem;
 #ssl_certificate_key /path/to/private_key;
@@ -127,9 +125,9 @@ ssl_session_tickets off;
 # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
 ssl_dhparam /etc/ssl/dhparam.pem;
 
-# intermediate configuration. tweak to your needs.
-ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS';
+# modern configuration. tweak to your needs.
+ssl_protocols TLSv1.2;
+ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256';
 ssl_prefer_server_ciphers on;
 
 # OCSP Stapling ---
@@ -141,19 +139,18 @@ ssl_stapling_verify on;
 # 国内使用 DNSPod Public DNS, 阿里 DNS
 resolver 119.29.29.29 182.254.116.116 223.5.5.5 223.6.6.6;
 # resolver 8.8.8.8 8.8.4.4;
-```
+EOF
 
-`/etc/nginx/includes/https-hsts.conf`:
-
-```
+sudo tee /etc/nginx/includes/https-hsts.conf <<-'EOF'
 include /etc/nginx/includes/https.conf;
 
 # HSTS
 # 15768000 seconds = 6 months
 add_header Strict-Transport-Security max-age=15768000;
+EOF
 ```
 
-网站配置：
+网站配置示例：
 
 ```
 server {
@@ -185,5 +182,5 @@ server {
 
 ## 参考资料
 
-* http://nginx.org/en/linux_packages.html
-* https://mozilla.github.io/server-side-tls/ssl-config-generator/
+* [Nginx Linux packages](http://nginx.org/en/linux_packages.html)
+* [Mozilla SSL Configuration Generator](https://mozilla.github.io/server-side-tls/ssl-config-generator/)
