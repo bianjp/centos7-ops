@@ -1,11 +1,12 @@
 # Shadowsocks
 
+Python 版实现已不再更新，建议使用 [shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)
+
 ## 安装
 
-需先安装 Python 和 pip, 2.x 或 3.x 版本均可
-
-```bash
-sudo pip3 install shadowsocks
+```base
+sudo curl -o /etc/yum.repos.d/shadowsocks.repo https://copr.fedorainfracloud.org/coprs/librehat/shadowsocks/repo/epel-7/librehat-shadowsocks-epel-7.repo
+sudo yum install shadowsocks-libev
 ```
 
 ## 配置
@@ -26,28 +27,33 @@ sudo pip3 install shadowsocks
 
 酌情修改配置
 
+若使用了防火墙，应配置防火墙允许所用端口的流量（TCP + UDP）通过
+
 ## 启动
 
 ```bash
-ssserver -c /etc/shadowsocks/config.json
+ss-server -c /etc/shadowsocks/config.json
 ```
 
 若 `server_port` 小于 1024，需要以 root 权限启动
 
 ## 自动启动
 
-创建 `/etc/systemd/system/shadowsocks.service`:
+自带的 `shadowsocks-libev.service` 不太好用，创建自定义的 `/etc/systemd/system/shadowsocks.service`:
 
 ```
 [Unit]
 Description=Shadowsocks Server Service
+Documentation=man:shadowsocks-libev(8)
 After=network.target
 
 [Service]
 # Require root if server_port < 1024
 User=root
-ExecStart=/usr/bin/ssserver -q -c /etc/shadowsocks/config.json
+LimitNOFILE=32768
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 Restart=always
+ExecStart=/usr/bin/ss-server -u -c /etc/shadowsocks/config.json
 
 [Install]
 WantedBy=multi-user.target
@@ -58,3 +64,8 @@ sudo systemctl daemon-reload
 sudo systemctl enable shadowsocks
 sudo systemctl start shadowsocks
 ```
+
+## 参考资料
+
+* [Shadowsocks](https://shadowsocks.org/)
+* [shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)
