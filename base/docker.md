@@ -68,6 +68,7 @@ sudo systemctl restart docker
 
 也可考虑使用其它加速服务：
 
+* [Docker 官方中国镜像](https://docs.docker.com/registry/recipes/mirror/#use-case-the-china-registry-mirror)
 * [网易云镜像仓库](https://www.163yun.com/product/repo)
 * [Daocloud 加速器](https://www.daocloud.io/mirror)
 

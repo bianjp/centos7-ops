@@ -69,3 +69,4 @@ sudo systemctl start shadowsocks
 
 * [Shadowsocks](https://shadowsocks.org/)
 * [shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)
+* [Optimizing Shadowsocks](https://github.com/shadowsocks/shadowsocks/wiki/Optimizing-Shadowsocks)
