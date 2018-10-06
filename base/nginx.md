@@ -31,7 +31,7 @@ sudo systemctl start nginx
 ```
 user nginx;
 worker_processes auto;
-pid /run/nginx.pid;
+pid /var/run/nginx.pid;
 error_log /var/log/nginx/error.log warn;
 
 worker_rlimit_nofile 65535;

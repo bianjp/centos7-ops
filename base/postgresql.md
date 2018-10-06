@@ -7,8 +7,8 @@ The world's most advanced open source database.
 官方源中版本过旧，使用 PostgreSQL 官方源
 
 ```
-sudo yum install https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-1.noarch.rpm
-sudo yum install postgresql10 postgresql10-server
+sudo yum install -y https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-2.noarch.rpm
+sudo yum install -y postgresql10-server
 
 # Initialize the database
 sudo /usr/pgsql-10/bin/postgresql-10-setup initdb

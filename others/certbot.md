@@ -5,6 +5,7 @@ Certbot 用于获取 [Let's Encrypt](https://letsencrypt.org/) SSL 证书
 ## 安装
 
 ```
+# 需启用 EPEL 源
 sudo yum install certbot
 ```
 

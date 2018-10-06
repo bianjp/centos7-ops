@@ -14,6 +14,8 @@ sudo yum install shadowsocks-libev
 创建 `/etc/shadowsocks/config.json`:
 
 ```
+sudo mkdir /etc/shadowsocks
+sudo tee /etc/shadowsocks/config.json <<EOF
 {
     "server": "0.0.0.0",
     "server_port": 8388,
@@ -23,6 +25,7 @@ sudo yum install shadowsocks-libev
     "fast_open": true,
     "workers": 2
 }
+EOF
 ```
 
 酌情修改配置

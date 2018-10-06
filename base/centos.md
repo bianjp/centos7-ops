@@ -21,7 +21,7 @@ echo LANG=en_US.UTF-8 > /etc/locale.conf
 ### 时区
 
 ```
-ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+ln -sf ../usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 ```
 
 ## 常用软件、软件源
@@ -48,9 +48,6 @@ PermitRootLogin no
 
 # 禁止密码登录
 PasswordAuthentication no
-
-# 忽略权限不正确的配置文件
-StrictModes yes
 
 # 避免长时间无操作后断线
 ClientAliveInterval 10
@@ -226,6 +223,18 @@ logrotate 用于日志文件的自动切割，避免日志文件过大而影响�
 其基本原理是通过 crontab 配置定时任务，每日执行一次，执行时读取各应用的配置文件，根据配置进行日志文件的切割、应用的重启等
 
 各应用的配置文件在 `/etc/logrotate.d/` 目录下，可按需修改
+
+## sudo
+
+执行 `visudo` 修改配置：
+
+```
+# 增加 /usr/local/bin
+Defaults    secure_path = /sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin
+
+# 取消注释
+%wheel  ALL=(ALL)       ALL
+```
 
 ## 用户
 
