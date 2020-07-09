@@ -15,7 +15,7 @@ curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
 sudo tee /etc/yum.repos.d/mariadb.repo <<-'EOF'
 [mariadb]
 name = MariaDB
-baseurl = https://yum.mariadb.org/10.2/centos7-amd64
+baseurl = http://yum.mariadb.org/10.5/centos7-amd64
 gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1
 EOF
@@ -24,7 +24,7 @@ EOF
 sudo tee /etc/yum.repos.d/mariadb.repo <<-'EOF'
 [mariadb]
 name = MariaDB
-baseurl = https://mirrors.ustc.edu.cn/mariadb/yum/10.2/centos7-amd64
+baseurl = https://mirrors.ustc.edu.cn/mariadb/yum/10.5/centos7-amd64
 gpgkey=https://mirrors.ustc.edu.cn/mariadb/yum/RPM-GPG-KEY-MariaDB
 gpgcheck=1
 EOF
@@ -86,6 +86,7 @@ sudo tee /etc/logrotate.d/mysql <<-'EOF'
     copytruncate
 }
 EOF
+```
 
 ## 参考资料
 
