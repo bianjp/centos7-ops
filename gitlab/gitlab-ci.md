@@ -10,13 +10,13 @@ GitLab Runner 是 GitLab-CI 的任务执行者，需单独安装
 
 ### 添加软件源
 
-国内使用[清华大学源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-ci-multi-runner/)：
+国内使用[清华大学源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-runner/)：
 
-```
+```bash
 sudo tee /etc/yum.repos.d/gitlab-ci-multi-runner.repo <<-'EOF'
-[gitlab-ci-multi-runner]
-name=gitlab-ci-multi-runner
-baseurl=http://mirrors.tuna.tsinghua.edu.cn/gitlab-ci-multi-runner/yum/el7
+[gitlab-runner]
+name=gitlab-runner
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/gitlab-runner/yum/el$releasever-$basearch/
 repo_gpgcheck=0
 gpgcheck=0
 enabled=1
@@ -26,19 +26,20 @@ EOF
 
 国外使用 GitLab 官方源：
 
-```
-curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-ci-multi-runner/script.rpm.sh | sudo bash
+```bash
+curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh" | sudo bash
 ```
 
 ### 安装
 
-```
-sudo yum install gitlab-ci-multi-runner
+```bash
+export GITLAB_RUNNER_DISABLE_SKEL=true
+sudo -E yum install gitlab-runner
 ```
 
 ## 管理命令
 
-```
+```bash
 # 查看状态/启动/关闭/重启
 sudo systemctl status/start/stop/restart gitlab-runner
 # 启用/禁用自动启动。安装后默认已启用自动启动
@@ -47,12 +48,10 @@ sudo systemctl enable/disable gitlab-runner
 
 ## 更新
 
-更新前检查[更新日志](https://gitlab.com/gitlab-org/gitlab-ci-multi-runner/blob/master/CHANGELOG.md) 和 GitLab 的[发布声明]()
+更新前检查[更新日志](https://gitlab.com/gitlab-org/gitlab-runner/-/blob/master/CHANGELOG.md)
 
-```
+```bash
 sudo yum update
-# 更新后需重启
-sudo systemctl restart gitlab-ci-multi-runner
 ```
 
 ## 安装 Docker
@@ -71,7 +70,7 @@ sudo gitlab-runner register
 
 若添加共享型 runner, token 为 Admin -> Runners 页面所示；
 
-若添加专用 runner, token 为项目的 Settings -> Runners 页面所示
+若添加专用 runner, token 为小组或项目的 Settings -> Runners 页面所示
 
 ## 并发度
 
@@ -88,4 +87,4 @@ __`limit` > 1 可能会导致缓存经常失效__
 * [GitLab Runner Documentation](https://docs.gitlab.com/runner/)
 * [Install GitLab Runner](https://docs.gitlab.com/runner/install/linux-repository.html)
 * [Advanced configuration options](https://docs.gitlab.com/runner/configuration/advanced-configuration.html)
-* [清华大学 gitlab-ci-multi-runner 源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-ci-multi-runner/)
+* [清华大学 gitlab-runner 源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-runner/)

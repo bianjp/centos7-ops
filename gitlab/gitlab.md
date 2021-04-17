@@ -6,15 +6,19 @@
 
 ### 安装依赖，配置环境
 
-```
-sudo yum install curl policycoreutils openssh-server openssh-clients
+```bash
+sudo yum install -y curl policycoreutils-python openssh-server perl
 sudo systemctl enable sshd
 sudo systemctl start sshd
+# 如果开启了 firewalld, 增加服务配置
+# systemctl is-active firewalld.service
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=https
+sudo systemctl reload firewalld
+
 sudo yum install postfix
 sudo systemctl enable postfix
 sudo systemctl start postfix
-sudo firewall-cmd --permanent --add-service=http
-sudo firewall-cmd --reload
 ```
 
 若系统不支持 IPv6，须修改 `/etc/postfix/main.cf`
@@ -27,27 +31,25 @@ inet_interfaces = loopback-only
 
 国内使用[清华大学源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-ce/)：
 
-```
+```bash
 sudo tee /etc/yum.repos.d/gitlab-ce.repo <<-'EOF'
 [gitlab-ce]
-name=gitlab-ce
-baseurl=http://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el7
-repo_gpgcheck=0
+name=Gitlab CE Repository
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/yum/el$releasever/
 gpgcheck=0
 enabled=1
-gpgkey=https://packages.gitlab.com/gpg.key
 EOF
 ```
 
 国外使用 GitLab 官方源：
 
-```
+```bash
 curl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
 ```
 
 ### 安装 GitLab
 
-```
+```bash
 sudo yum install gitlab-ce
 ```
 
@@ -55,7 +57,7 @@ sudo yum install gitlab-ce
 
 配置文件为 `/etc/gitlab/gitlab.rb`
 
-```
+```ruby
 # 访问地址。可以包含端口号、子路径
 external_url 'http://git.example.com'
 
@@ -63,10 +65,11 @@ external_url 'http://git.example.com'
 gitlab_rails['time_zone'] = 'Asia/Shanghai'
 
 # gitlab 主目录。不可更改！
-# user['home'] = "/var/opt/gitlab"
+#jinyuan
+ user['home'] = "/var/opt/gitlab"
 
 # 仓库存储目录
-# git_data_dir "/var/opt/gitlab/git-data"
+# git_data_dirs({ "default" => { "path" => "/var/opt/gitlab/git-data" } })
 
 # 备份文件存储目录
 # gitlab_rails['backup_path'] = "/var/opt/gitlab/backups"
@@ -84,7 +87,7 @@ logging['logrotate_frequency'] = "monthly"
 
 若使用 HTTPS，修改以下配置：
 
-```
+```ruby
 external_url "https://git.example.com"
 nginx['redirect_http_to_https'] = true
 nginx['ssl_certificate'] = "/etc/gitlab/ssl/gitlab.example.crt"
@@ -93,10 +96,7 @@ nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/gitlab.example.com.key"
 
 `/etc/gitlab/nginx-default.conf` 内容如下：
 
-```
-# GitLab >= 8.9 默认已配置，不能重复配置
-# server_names_hash_bucket_size 64;
-
+```nginx
 server {
     listen       80 default_server;
     server_name  _;
@@ -107,58 +107,29 @@ server {
 }
 ```
 
-更多配置，查看[配置文档](http://docs.gitlab.com/omnibus/settings/)
+更多配置，查看[配置文档](https://docs.gitlab.com/omnibus/settings/)
 
 修改配置文件后需执行以下命令以使配置生效
 
-```
+```bash
 sudo gitlab-ctl reconfigure
-sudo gitlab-ctl restart
 ```
 
 若修改了目录设置，可能需要手动迁移数据，具体操作查看相关文档
 
 ## 集成 Let's Encrypt SSL 证书
 
-为避免影响运行中的 GitLab 服务，证书的申请和续期应使用 `webroot` 插件，但 GitLab 默认的 Nginx 配置中并未设置 `root`，所有请求都会转发给应用服务器，因此需额外配置：
+GitLab 已官方支持集成 Let's Encrypt, 参考官方文档: https://docs.gitlab.com/omnibus/settings/ssl.html#lets-encrypt-integration
 
-1. 编辑 `/etc/gitlab/gitlab.rb`:
-
-    ```
-    nginx['custom_gitlab_server_config'] = "location ^~ /.well-known {\n    alias /srv/letsencrypt/.well-known;\n  }"
-    ```
-
-2. 创建 `/srv/letsencrypt/` 目录：
-
-    ```
-    sudo mkdir /srv/letsencrypt
-    # 所有者改为 nginx 进程执行用户。用户名和组名查看 /var/opt/gitlab/nginx/conf/nginx.conf
-    sudo chown gitlab-www:gitlab-www /srv/letsencrypt
-    ```
-
-Let's Encrypt 证书申请和续期时 `webroot-path` 设置为 `/srv/letsencrypt`
-
-证书位置配置（`/etc/gitlab/gitlab.rb`）：
-
-```
-nginx['ssl_certificate'] = "/etc/letsencrypt/live/git.example.com/fullchain.pem"
-nginx['ssl_certificate_key'] = "/etc/letsencrypt/live/git.example.com/privkey.pem"
-```
-
-使用 crontab 自动续期证书时，续期成功后需重启 Nginx：
-
-```
-# Minute Hour Day Month Day_of_week Command
-    0     4    *    *        1      /bin/certbot renew --quiet --renew-hook "/bin/gitlab-ctl restart nginx"
-```
-
-Let's Encrypt 证书的申请和维护请查看 [Certbot 文档](../others/certbot.md)
+注意，如果手动管理证书，证书变更后需要重启 GitLab 的 Nginx: `/bin/gitlab-ctl restart nginx`
 
 ## 命令行工具
 
-```
+```bash
 # 重新配置/启动/查看状态/停止/重启
 sudo gitlab-ctl reconfigure/start/status/stop/restart
+# 查看更多命令帮助
+sudo gitlab-ctl help
 
 # 启用/禁用自动启动。安装后默认已启用自动启动
 sudo systemctl enable/disable gitlab-runsvdir
@@ -169,11 +140,15 @@ sudo gitlab-rake gitlab:check
 
 ## 升级
 
-升级前需检查新版本及所有中间版本的[发布声明](https://about.gitlab.com/blog/archives.html)
+升级前需检查新版本及所有中间版本的[发布声明](https://about.gitlab.com/releases/archives.html)
 
-```
+一般情况下直接 yum 升级即可，升级大版本时则一般需要先升级到当前大版本的最新版再升级到下一个大版本。
+
+```bash
 sudo yum update gitlab-ce
 ```
+
+[官方 Omnibus 升级文档](https://docs.gitlab.com/omnibus/update/)
 
 ## 备份和恢复
 
@@ -183,8 +158,8 @@ sudo yum update gitlab-ce
 
 ### 备份
 
-```
-sudo gitlab-rake gitlab:backup:create
+```bash
+sudo gitlab-backup create
 ```
 
 ### 自动定期备份
@@ -195,7 +170,7 @@ sudo gitlab-rake gitlab:backup:create
 
 ```
 # Minute Hour Day Month Day_of_week Command
-    0     4    *    *        6      /opt/gitlab/bin/gitlab-rake gitlab:backup:create CRON=1
+    0     4    *    *        6      /opt/gitlab/bin/gitlab-backup create CRON=1
 
 # 将备份文件同步到数据盘
 #  30     4    *    *        6      /bin/rsync -tpq /var/opt/gitlab/backups/* /data/gitlab-backup/
@@ -209,14 +184,15 @@ sudo gitlab-rake gitlab:backup:create
 
 ```
 # 停止使用数据库的进程
-sudo gitlab-ctl stop unicorn
+sudo gitlab-ctl stop puma
 sudo gitlab-ctl stop sidekiq
 
 # 恢复。若有多个备份文件，需指定 timestamp
-sudo gitlab-rake gitlab:backup:restore [BACKUP=timestamp_of_backup]
+sudo gitlab-backup restore [BACKUP=timestamp_of_backup]
 
-# 启动
-sudo gitlab-ctl start
+# 重新配置、重启
+sudo gitlab-ctl reconfigure
+sudo gitlab-ctl restart
 
 # 检查
 sudo gitlab-rake gitlab:check SANITIZE=true
@@ -230,9 +206,9 @@ __注意：恢复时 GitLab 版本必须与备份时版本完全相同（x.x.x�
 
 ## 参考资料
 
-* [Installation](https://about.gitlab.com/downloads/)
-* [GitLab CE Documentation](http://docs.gitlab.com/ce/)
-* [Omnibus Documentation](http://docs.gitlab.com/omnibus/)
-* [Omnibus Settings](http://docs.gitlab.com/omnibus/settings/)
-* [Backup and Restore](http://docs.gitlab.com/ce/raketasks/backup_restore.html)
+* [Installation](https://about.gitlab.com/install/?version=ce#centos-7)
+* [GitLab CE Documentation](https://docs.gitlab.com/ce/)
+* [Omnibus Documentation](https://docs.gitlab.com/omnibus/)
+* [Omnibus Settings](https://docs.gitlab.com/omnibus/settings/)
+* [Backup and Restore](https://docs.gitlab.com/ce/raketasks/backup_restore.html)
 * [清华大学 gitlab-ce 源](https://mirror.tuna.tsinghua.edu.cn/help/gitlab-ce/)

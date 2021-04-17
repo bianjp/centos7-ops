@@ -20,28 +20,28 @@ GitLab 自带 GitLab-CI，可用于自动构建、测试、部署
 * Runner: 执行任务的容器
     * 分共享和专用两种，共享的可供所有项目使用，专用的只能用于特定项目（一个或多个）
     * 项目必须有可用的 runner 才能执行 GitLab-CI 任务
-    * 创建 runner 只能在安装了 gitlab-ci-multi-runner 的服务器上执行 shell 命令
-    * 查看/管理项目的 runner 在项目的 Settings -> Runners
+    * 创建 runner 只能在安装了 gitlab-runner 的服务器上执行 shell 命令
+    * 查看/管理项目的 runner 在项目的 Settings -> CI/CD -> Runners
 
-* Deploy key: 对 git 仓库有只读权限的密钥对的公钥，可用于在部署服务器上拉取代码。在项目的 Settings -> Deploy keys 中配置
+* Deploy key: 对 git 仓库有只读权限的密钥对的公钥，可用于在部署服务器上拉取代码。在项目的 Settings -> Repository -> Deploy keys 中配置
 
-* Secret Variable: GitLab-CI 中执行任务时的环境变量，只有对仓库有 master 及以上权限的用户才能查看和管理。可用于保存敏感信息（如部署使用的 SSH 私钥），避免将敏感信息保存在人人可见的 `.gitlab-ci.yml` 配置文件中。在项目的 Settings -> Variables 中配置
+* Variables: GitLab-CI 中执行任务时的环境变量，只有对仓库有 master 及以上权限的用户才能查看和管理。可用于保存配置信息（避免写死在 `.gitlab-ci.yml` 中），或敏感信息（如部署使用的 SSH 私钥，直接在 `.gitlab-ci.yml` 中配置有安全风险）。在项目的 Settings -> CI/CD -> Variables 中配置
 
 ## 配置
 
-1. 在项目的 Settings -> Project Settings -> Features 中启用 `Builds`
+1. 在项目的 Settings -> General -> Visibility, project features, permissions 中启用 Pipelines
 
 2. 确保有可用 runner。创建 runner 只能由 GitLab 服务器管理员操作。尽量使用共享型 runner 以便管理
 
-    如使用共享 runner，在项目的 Settings -> Runners 中启用共享 runner
+    如使用共享 runner，在项目的 Settings -> CI/CD -> Runners 中启用共享 runner
 
 3. 在项目代码的根目录下添加 `.gitlab-ci.yml`，配置自动构建的环境（Docker镜像名称）、依赖的服务（MySQL、Redis等，也需是 Docker 镜像名称）、需要执行的任务（stage）等。将文件提交到版本库
 
-    配置文件语法参考[官方文档](http://doc.gitlab.com/ee/ci/yaml/README.html)
+    配置文件语法参考[官方文档](https://docs.gitlab.com/ce/ci/yaml/README.html)
 
 4. 如需自动部署，生成一对 SSH 密钥（在任意机器上均可）
 
-    ```
+    ```bash
     ssh-kengen -t rsa -C 'project_name@gitlab-ci'
     ```
 
@@ -54,13 +54,13 @@ GitLab 自带 GitLab-CI，可用于自动构建、测试、部署
       * 若自动部署工具（如 mina）启用了 SSH agent forwarding， 将公钥添加到项目的 Deploy Keys 中
       * 若未启用，将部署服务器上的 `~/.ssh/id_rsa.pub` 添加到项目的 Deploy Keys 中
 
-## Builds Emails
+## 构建邮件提醒
 
-GitLab 支持在构建失败时邮件提示，但默认并未开启
+GitLab 支持在构建失败时邮件提示，但默认未开启
 
-可在 Project -> Services -> Builds emails 中开启
+可在 Project -> Integrations -> Pipelines emails 中开启
 
-管理员用户可在 Admin Area -> Service Templates -> Builds emails 中为新项目默认启用
+管理员用户可在 Admin Area -> Service Templates -> Pipelines emails 中为新项目默认启用
 
 ## 技巧/注意事项
 
@@ -72,7 +72,7 @@ GitLab 支持在构建失败时邮件提示，但默认并未开启
 
 使用以下命令在任务中使用私钥：
 
-```
+```bash
 if [ -n "$SSH_PRIVATE_KEY" ]; then
   eval $(ssh-agent -s)
   ssh-add <(echo "$SSH_PRIVATE_KEY")
@@ -88,25 +88,12 @@ fi
 
 使用以下命令解决：
 
-```
+```bash
 if [ -x '/etc/profile.d/rvm.sh' ]; then
   source /etc/profile.d/rvm.sh
   rvm use default
 fi
 ```
-
-### Locale
-
-同样是由于 non-login shell 的问题，导致任务执行时环境的 locale 不是 utf-8，若有命令输出非 ASCII 字符，可能会导致命令执行失败
-
-使用以下命令解决：
-
-```
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-```
-
-__GitLab runner 1.11 似乎已不存在这个问题__
 
 ### 使用服务
 
@@ -114,8 +101,8 @@ __GitLab runner 1.11 似乎已不存在这个问题__
 
 这些提供服务的 docker 容器会被链接到执行 GitLab-CI 任务的容器，主机名称通过以下规则从 docker 镜像名称转换：
 
-* 忽略":"及其后面的
-* "/" 替换为 "__"
+* 忽略 ":" 及其后面的版本号
+* "/" 替换为 "\_\_"
 
 如 "bianjp/mariadb-alpine:latest" 的主机名为 "bianjp__mariadb-alpine"，"redis:alpine" 的主机名为 "redis"
 
@@ -129,7 +116,7 @@ __GitLab runner 1.11 似乎已不存在这个问题__
 
 项目根目录下添加 `.gitlab-ci-before-script.sh`:
 
-```
+```bash
 #!/bin/bash
 
 # SSH private key
@@ -224,7 +211,7 @@ development:
 
 ## 参考资料
 
-* [GitLab-CI documentation](http://doc.gitlab.com/ce/ci/)
-* [Using Docker Images](http://doc.gitlab.com/ee/ci/docker/using_docker_images.html)
-* [.gitlab-ci.yml usage](http://doc.gitlab.com/ce/ci/yaml/README.html)
-* [Using SSH keys](https://gitlab.com/help/ci/ssh_keys/README.md)
+* [GitLab-CI documentation](https://docs.gitlab.com/ce/ci/)
+* [Using Docker Images](https://docs.gitlab.com/ce/ci/docker/using_docker_images.html)
+* [.gitlab-ci.yml usage](https://docs.gitlab.com/ce/ci/yaml/README.html)
+* [Using SSH keys](https://docs.gitlab.com/ce/ci/ssh_keys/index.html)
