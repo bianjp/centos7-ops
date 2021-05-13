@@ -14,10 +14,7 @@ sudo sed -i 's#download.docker.com#mirrors.tuna.tsinghua.edu.cn/docker-ce#g' /et
 ```
 
 ```bash
-# dependencies
-sudo yum install yum-utils device-mapper-persistent-data lvm2
-
-sudo yum install docker-ce
+sudo yum install docker-ce docker-ce-cli containerd.io
 
 sudo systemctl start docker
 sudo systemctl enable docker
@@ -40,7 +37,7 @@ Docker 镜像等数据默认保存在 `/var/lib/docker`，若系统盘空间较�
 
 ```json
 {
-  "graph": "/data/docker"
+  "data-root": "/data/docker"
 }
 ```
 
@@ -58,7 +55,7 @@ sudo systemctl restart docker
 
 国内拉取 docker 镜像很慢且失败率很高，可使用阿里云镜像加速器
 
-登录 [阿里云](https://cr.console.aliyun.com/#/accelerator) 获取加速地址（需认证为开发者），添加到 `/etc/docker/daemon.json` 中：
+登录 [阿里云](https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors) 获取加速地址（需认证为开发者），添加到 `/etc/docker/daemon.json` 中：
 
 ```json
 {
@@ -68,14 +65,13 @@ sudo systemctl restart docker
 
 也可考虑使用其它加速服务：
 
-* [Docker 官方中国镜像](https://docs.docker.com/registry/recipes/mirror/#use-case-the-china-registry-mirror)
-* [网易云镜像仓库](https://www.163yun.com/product/repo)
+* [七牛镜像加速](https://kirk-enterprise.github.io/hub-docs/#/user-guide/mirror)
+* 网易加速器: https://hub-mirror.c.163.com/
 * [Daocloud 加速器](https://www.daocloud.io/mirror)
 
 ## 参考资料
 
 * [Docker Documentation](https://docs.docker.com/)
-* [Install Docker Engine](https://docs.docker.com/engine/installation/)
-* [Install Docker CE on CentOS](https://docs.docker.com/engine/installation/linux/docker-ce/centos/)
+* [Install Docker Engine on CentOS](https://docs.docker.com/engine/install/centos/)
 * [清华大学 docker 源](https://mirror.tuna.tsinghua.edu.cn/help/docker-ce/)
 * [Daemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#/daemon-configuration-file)
